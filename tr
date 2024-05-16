@@ -1,4 +1,4 @@
---ya
+--xd
 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Ready"):FireServer()
 local replayName =   "t.txt"
 local startTime = tick()
@@ -10,7 +10,7 @@ return loadstring("return CFrame.new(" .. s .. ");")();
 end
 
 local function place(info)
-    repeat task.wait() until tonumber(info.moneyreq) <= game.Players.LocalPlayer.Money.Value
+  repeat wait(.1) until tonumber(info.moneyreq) <= game.Players.LocalPlayer.Money.Value
     local args = {
         [1] = info.character,
         [2] = stcf(info.position),
@@ -22,7 +22,7 @@ end
 
 local function upgrade(info)
     local max_upgrade = game:GetService("Workspace").Unit[game.Players.LocalPlayer.Name]:WaitForChild(info.character).Stats.TotalValue.Value
-    repeat task.wait() until tonumber(info.maxupgrades) <= max_upgrade
+    repeat wait(.1) until tonumber(info.maxupgrades) <= max_upgrade
 for i,v in pairs(game:GetService("Workspace").Unit[game.Players.LocalPlayer.Name]:GetChildren()) do 
 if v:IsA("Model") and v.Name == info.character and v:FindFirstChild("Stats") and v.Stats:FindFirstChild("UnitRealPlace") and v.Stats.UnitRealPlace.Value == info.unitid then 
 local args = {
