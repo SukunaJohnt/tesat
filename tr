@@ -1,0 +1,62 @@
+  game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Ready"):FireServer()
+        local replayName =   "t.txt"
+        local startTime = tick()
+     local macro = readfile(replayName)
+     local httpService = game:GetService("HttpService")
+     local recordTowers = httpService:JSONDecode(macro)
+     local function stcf(s)
+        return loadstring("return CFrame.new(" .. s .. ");")();
+     end
+     
+        local function place(info)
+            repeat task.wait() until tonumber(info.moneyreq) <= game.Players.LocalPlayer.Money.Value
+            local args = {
+                [1] = info.character,
+                [2] = stcf(info.position),
+                [3] = Vector3.zero,
+                [4] = info.unitid
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("CreateUnits"):FireServer(unpack(args))
+        end 
+        
+        local function upgrade(info)
+            local max_upgrade = game:GetService("Workspace").Unit[game.Players.LocalPlayer.Name]:WaitForChild(info.character).Stats.TotalValue.Value
+            repeat task.wait() until tonumber(info.maxupgrades) <= max_upgrade
+ for i,v in pairs(game:GetService("Workspace").Unit.LocalPlayer:GetChildren()) do 
+    if v:IsA("Model") and v.Name == info.character and v:FindFirstChild("Stats") and v.Stats:FindFirstChild("UnitRealPlace") and v.Stats.UnitRealPlace.Value == info.unitid then 
+   local args = {
+       [1] = v
+   }
+   
+   game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrades"):FireServer(unpack(args))
+end    
+end
+        end 
+
+         local function sell(info)
+            local player = game.Players.LocalPlayer.Name
+            local unitsell = workspace:WaitForChild("Unit"):WaitForChild(player):WaitForChild(info.character)
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SellUnit"):FireServer(unitsell)  
+         end 
+
+        local tower = 1
+        spawn(function()
+        while task.wait() do 
+            if not recordTowers[tower] then 
+                break 
+            end
+    
+            local currentTask = recordTowers[tower]         
+        if (currentTask.time <= tick() - startTime) then 
+                 if currentTask.type == "CreateUnit" then 
+                place(currentTask)
+                 elseif currentTask.type == "UpgradeUnit" then 
+                    upgrade(currentTask)
+                 elseif currentTask.type == "SellUnit" then 
+                    sell(currentTask)
+                 end
+                recordTowers[tower] = nil
+                tower = tower + 1 
+                end 
+         end
+    end)
